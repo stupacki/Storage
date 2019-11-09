@@ -1,8 +1,7 @@
 package io.example.app
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.stupacki.storage.R
+import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
