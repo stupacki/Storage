@@ -28,4 +28,48 @@ class Storage(private val boxStore: BoxStore) {
                 }
             }
     }
+
+    fun <T> put(): T {
+        TODO("implement")
+    }
+
+    fun <T> get(id: String): T {
+        TODO("implement")
+    }
+
+    fun <T> getAll(collection: String): List<T> {
+        TODO("implement")
+    }
+
+    fun <T> remove(id: String): Unit {
+        TODO("implement")
+    }
+
+    fun <T> removeAll(collection: String): Unit {
+        TODO("implement")
+    }
+
+    suspend fun <T> putAsync(): T {
+        TODO("implement")
+    }
+
+    suspend fun <T> getAsync(id: String): T {
+        TODO("implement")
+    }
+
+    suspend fun <T> getAllAsync(collection: String): List<T> {
+        TODO("implement")
+    }
+
+    suspend fun <T> removeAsync(id: String): Unit {
+        TODO("implement")
+    }
+
+    suspend fun <T> removeAllAsync(collection: String): Unit {
+        TODO("implement")
+    }
+
+    private suspend fun <T> cleanup(): Unit {
+        TODO("implement")
+    }
 }
