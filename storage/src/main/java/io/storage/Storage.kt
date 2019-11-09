@@ -18,7 +18,7 @@ class Storage(private val boxStore: BoxStore) {
         fun build(): Storage =
             appContext?.let { nonNullContext ->
                 Storage(generateBoxStore(nonNullContext))
-            } ?: throw IllegalStateException()
+            } ?: throw IllegalStateException("Application context has not been set")
 
         private fun generateBoxStore(context: Context): BoxStore =
             MyObjectBox.builder().androidContext(context).build().apply {
