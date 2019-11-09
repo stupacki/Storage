@@ -8,7 +8,7 @@ class ExampleApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        storage = Storage.Builder().appContext(this@ExampleApp).build()
+        storage = Storage.Builder.appContext(this@ExampleApp).build()
     }
 
     companion object {

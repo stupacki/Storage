@@ -29,7 +29,6 @@ data class Entry(
 
     companion object {
         private const val NEW_ID: Long = 0L
-        private const val SECONDS_FACTOR = 1000
 
         fun newTimeStamp(): Long = Calendar.getInstance().timeInMillis
     }

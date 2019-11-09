@@ -8,7 +8,7 @@ import timber.log.Timber
 
 class Storage(private val boxStore: BoxStore) {
 
-    class Builder {
+    object Builder {
 
         private var appContext: Context? = null
 
