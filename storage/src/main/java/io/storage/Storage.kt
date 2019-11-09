@@ -1,12 +1,14 @@
 package io.storage
 
 import android.content.Context
+import io.objectbox.Box
 import io.objectbox.BoxStore
 import io.objectbox.android.AndroidObjectBrowser
+import io.storage.model.Entry
 import io.storage.model.MyObjectBox
 import timber.log.Timber
 
-class Storage(private val boxStore: BoxStore) {
+class Storage(private val entryBox: Box<Entry>) {
 
     object Builder {
 
@@ -17,7 +19,7 @@ class Storage(private val boxStore: BoxStore) {
 
         fun build(): Storage =
             appContext?.let { nonNullContext ->
-                Storage(generateBoxStore(nonNullContext))
+                Storage(generateBoxStore(nonNullContext).boxFor(Entry::class.java))
             } ?: throw IllegalStateException("Application context has not been set")
 
         private fun generateBoxStore(context: Context): BoxStore =
@@ -29,7 +31,7 @@ class Storage(private val boxStore: BoxStore) {
             }
     }
 
-    fun <T> put(): T {
+    fun <T> put(collection: String): T {
         TODO("implement")
     }
 
@@ -49,7 +51,7 @@ class Storage(private val boxStore: BoxStore) {
         TODO("implement")
     }
 
-    suspend fun <T> putAsync(): T {
+    suspend fun <T> putAsync(collection: String): T {
         TODO("implement")
     }
 
