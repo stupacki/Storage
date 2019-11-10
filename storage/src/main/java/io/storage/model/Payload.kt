@@ -1,12 +1,15 @@
 package io.storage.model
 
+import io.objectbox.converter.PropertyConverter
+
 data class Payload(val json: String) {
 
-    fun toJson(): String = json
+    internal class PayloadConverter : PropertyConverter<Payload, String> {
 
-    companion object {
+        override fun convertToDatabaseValue(entityProperty: Payload): String =
+            entityProperty.json
 
-        fun from(json: String): Payload =
-            Payload(json = json)
+        override fun convertToEntityProperty(databaseValue: String): Payload =
+            Payload(databaseValue)
     }
 }

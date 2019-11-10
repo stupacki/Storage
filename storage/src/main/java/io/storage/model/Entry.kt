@@ -1,18 +1,20 @@
 package io.storage.model
 
-import com.squareup.moshi.Json
 import io.objectbox.annotation.Convert
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
+import io.storage.model.Payload.PayloadConverter
+import io.storage.model.ValidityTime.ValidityTimeConverter
 import java.util.*
 
 @Entity
 data class Entry(
-    val id: String = "",
+    val id: String,
+    @Convert(converter = PayloadConverter::class, dbType = String::class)
     val payload: Payload,
-    val collection: String = "",
-    @Convert(converter = ValidityTime.Converter::class, dbType = Int::class)
-    val validityTime: ValidityTime = ValidityTime.SPAN_FOREVER
+    val collection: String,
+    @Convert(converter = ValidityTimeConverter::class, dbType = Int::class)
+    val validityTime: ValidityTime
 ) {
 
     @Id

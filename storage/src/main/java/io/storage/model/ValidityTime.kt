@@ -28,7 +28,7 @@ enum class ValidityTime(val time: Int) {
     SPAN_FOREVER(0), //forever
     SPAN_NEXT_APP_START(-1);
 
-    class Converter : PropertyConverter<ValidityTime, Int> {
+    class ValidityTimeConverter : PropertyConverter<ValidityTime, Int> {
 
         override fun convertToDatabaseValue(entityProperty: ValidityTime): Int =
             entityProperty.time

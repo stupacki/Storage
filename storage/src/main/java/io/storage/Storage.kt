@@ -99,8 +99,8 @@ class Storage(private val entryBox: Box<Entry>) {
         }
 
     private fun find(collection: String, id: String): Entry? =
-        entryBox
-            .query {
+        entryBox.query()
+            .run {
                 equal(Entry_.collection, collection)
                 equal(Entry_.id, id)
                 build()
@@ -108,8 +108,8 @@ class Storage(private val entryBox: Box<Entry>) {
             .findFirst()
 
     private fun find(collection: String): List<Entry> =
-        entryBox
-            .query {
+        entryBox.query()
+            .run {
                 equal(Entry_.collection, collection)
                 build()
             }
