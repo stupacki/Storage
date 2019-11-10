@@ -4,17 +4,18 @@ import io.objectbox.annotation.Convert
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
 import io.storage.model.Payload.PayloadConverter
+import io.storage.model.ValidityTime.SPAN_FOREVER
 import io.storage.model.ValidityTime.ValidityTimeConverter
 import java.util.*
 
 @Entity
 data class Entry(
-    val payloadId: String,
+    val payloadId: String = "",
     @Convert(converter = PayloadConverter::class, dbType = String::class)
-    val payload: Payload,
-    val collection: String,
+    val payload: Payload = payloadOf(""),
+    val collection: String = "",
     @Convert(converter = ValidityTimeConverter::class, dbType = Int::class)
-    val validityTime: ValidityTime
+    val validityTime: ValidityTime = SPAN_FOREVER
 ) {
 
     @Id

@@ -1,6 +1,7 @@
 package io.storage
 
 import io.kotlintest.shouldBe
+import io.storage.model.Entry
 import io.storage.model.ValidityTime
 import io.storage.model.payloadOf
 
@@ -17,7 +18,17 @@ internal class SyncStorageSpec : StorageSpec() {
 
             "save a data body successful with a lifetime" {
 
-                saveUserWithLifeTimeToStorage() shouldBe payloadOf(JSON_DATA)
+                saveUserWithLifeTimeToStorage(ValidityTime.SPAN_ONE_DAY) shouldBe payloadOf(JSON_DATA)
+            }
+        }
+
+        "get()" should {
+
+            "return a previously saved data body" {
+
+                saveUserToStorage()
+
+                storage.get(USER_COLLECTION, ID) shouldBe payloadOf(JSON_DATA)
             }
         }
     }
@@ -29,17 +40,25 @@ internal class SyncStorageSpec : StorageSpec() {
             payload = payloadOf(JSON_DATA)
         )
 
-    private fun saveUserWithLifeTimeToStorage() =
+    private fun saveUserWithLifeTimeToStorage(validityTime: ValidityTime) =
         storage.put(
             collection = USER_COLLECTION,
             payloadId = ID,
             payload = payloadOf(JSON_DATA),
-            validityTime = ValidityTime.SPAN_ONE_DAY
+            validityTime = validityTime
         )
 
     companion object {
         private const val USER_COLLECTION = "USER_COLLECTION"
         private const val ID = "1"
         private const val JSON_DATA = "{'id': $ID}"
+
+        private fun userEntry(): Entry =
+            Entry(
+                collection = USER_COLLECTION,
+                payloadId = ID,
+                payload = payloadOf(JSON_DATA),
+                validityTime = ValidityTime.SPAN_ONE_DAY
+            )
     }
 }

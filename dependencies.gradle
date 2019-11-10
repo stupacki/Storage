@@ -1,34 +1,34 @@
 ext {
     versions = [
-            moshi                  : '1.8.0',
-            jUnit5                 : '5.5.2',
+            moshi : '1.8.0',
+            jUnit5: '5.5.2',
     ]
 
     libraries = [
             //General
-            kotlinStd                : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion",
-            kotlinReflect            : "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion",
-            coroutinesCore           : "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines",
-            coroutinesAndroid        : "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines",
+            kotlinStd         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion",
+            kotlinReflect     : "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion",
+            coroutinesCore    : "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines",
+            coroutinesAndroid : "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines",
 
             //Android
-            appCompat                : 'androidx.appcompat:appcompat:1.1.0',
-            constraintLayout         : 'androidx.constraintlayout:constraintlayout:2.0.0-beta3',
-            coreExtensions           : 'androidx.core:core-ktx:1.1.0',
-            material                 : 'com.google.android.material:material:1.1.0-alpha10',
+            appCompat         : 'androidx.appcompat:appcompat:1.1.0',
+            constraintLayout  : 'androidx.constraintlayout:constraintlayout:2.0.0-beta3',
+            coreExtensions    : 'androidx.core:core-ktx:1.1.0',
+            material          : 'com.google.android.material:material:1.1.0-alpha10',
 
             //Third party
-            objectboxProcessor       : "io.objectbox:objectbox-processor:$objectboxVersion",
-            objectboxAndroid         : "io.objectbox:objectbox-android:$objectboxVersion",
-            objectboxBrowser         : "io.objectbox:objectbox-android-objectbrowser:$objectboxVersion",
-            moshi                    : "com.squareup.moshi:moshi:$versions.moshi",
-            moshiCodegen             : "com.squareup.moshi:moshi-kotlin-codegen:$versions.moshi",
-            timber                   : 'com.jakewharton.timber:timber:4.7.1',
+            objectboxProcessor: "io.objectbox:objectbox-processor:$objectboxVersion",
+            objectboxAndroid  : "io.objectbox:objectbox-android:$objectboxVersion",
+            objectboxBrowser  : "io.objectbox:objectbox-android-objectbrowser:$objectboxVersion",
+            moshi             : "com.squareup.moshi:moshi:$versions.moshi",
+            moshiCodegen      : "com.squareup.moshi:moshi-kotlin-codegen:$versions.moshi",
+            timber            : 'com.jakewharton.timber:timber:4.7.1',
 
             //Test
-            jUnit5                   : "org.junit.jupiter:junit-jupiter-api:$versions.jUnit5",
-            jUnit5Engine             : "org.junit.jupiter:junit-jupiter-engine:$versions.jUnit5",
-            kotlinTest               : 'io.kotlintest:kotlintest-runner-junit5:3.4.2',
-            mockk                    : 'io.mockk:mockk:1.9.3',
+            jUnit5            : "org.junit.jupiter:junit-jupiter-api:$versions.jUnit5",
+            jUnit5Engine      : "org.junit.jupiter:junit-jupiter-engine:$versions.jUnit5",
+            kotlinTest        : 'io.kotlintest:kotlintest-runner-junit5:3.4.2',
+            mockk             : 'io.mockk:mockk:1.9.3',
     ]
 }

@@ -111,7 +111,6 @@ class Storage(private val entryBox: Box<Entry>) {
         }
 
     private fun find(collection: String, payloadId: String): Entry? =
-        try {
             entryBox.query()
                 .run {
                     equal(Entry_.collection, collection)
@@ -119,18 +118,14 @@ class Storage(private val entryBox: Box<Entry>) {
                     build()
                 }
                 .findFirst()
-        } catch (e: DbException) {
-            Timber.w("No data found in $collection with id $payloadId")
-            null
-        }
 
     private fun find(collection: String): List<Entry> =
-        entryBox.query()
-            .run {
-                equal(Entry_.collection, collection)
-                build()
-            }
-            .find()
+            entryBox.query()
+                .run {
+                    equal(Entry_.collection, collection)
+                    build()
+                }
+                .find()
 
     private fun delete(collection: String, payloadId: String): Unit =
         find(collection, payloadId)?.let { entry ->

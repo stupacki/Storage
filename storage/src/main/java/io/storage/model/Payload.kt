@@ -10,9 +10,8 @@ data class Payload(val json: String) {
             entityProperty.json
 
         override fun convertToEntityProperty(databaseValue: String): Payload =
-            Payload(databaseValue)
+            payloadOf(databaseValue)
     }
 }
 
-fun payloadOf(json: String): Payload =
-    Payload(json)
+fun payloadOf(json: String): Payload = Payload(json)
