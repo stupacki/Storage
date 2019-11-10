@@ -1,6 +1,7 @@
 ext {
     versions = [
             moshi                  : '1.8.0',
+            jUnit5                 : '5.5.2',
     ]
 
     libraries = [
@@ -23,5 +24,11 @@ ext {
             moshi                    : "com.squareup.moshi:moshi:$versions.moshi",
             moshiCodegen             : "com.squareup.moshi:moshi-kotlin-codegen:$versions.moshi",
             timber                   : 'com.jakewharton.timber:timber:4.7.1',
+
+            //Test
+            jUnit5                   : "org.junit.jupiter:junit-jupiter-api:$versions.jUnit5",
+            jUnit5Engine             : "org.junit.jupiter:junit-jupiter-engine:$versions.jUnit5",
+            kotlinTest               : 'io.kotlintest:kotlintest-runner-junit5:3.4.2',
+            mockk                    : 'io.mockk:mockk:1.9.3',
     ]
 }

@@ -13,3 +13,6 @@ data class Payload(val json: String) {
             Payload(databaseValue)
     }
 }
+
+fun payloadOf(json: String): Payload =
+    Payload(json)

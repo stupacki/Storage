@@ -4,6 +4,7 @@ import android.content.Context
 import io.objectbox.Box
 import io.objectbox.BoxStore
 import io.objectbox.android.AndroidObjectBrowser
+import io.objectbox.exception.DbException
 import io.storage.model.*
 import io.storage.model.ValidityTime.SPAN_FOREVER
 import timber.log.Timber
@@ -110,13 +111,18 @@ class Storage(private val entryBox: Box<Entry>) {
         }
 
     private fun find(collection: String, payloadId: String): Entry? =
-        entryBox.query()
-            .run {
-                equal(Entry_.collection, collection)
-                equal(Entry_.id, payloadId)
-                build()
-            }
-            .findFirst()
+        try {
+            entryBox.query()
+                .run {
+                    equal(Entry_.collection, collection)
+                    equal(Entry_.payloadId, payloadId)
+                    build()
+                }
+                .findFirst()
+        } catch (e: DbException) {
+            Timber.w("No data found in $collection with id $payloadId")
+            null
+        }
 
     private fun find(collection: String): List<Entry> =
         entryBox.query()

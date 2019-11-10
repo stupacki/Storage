@@ -8,7 +8,6 @@ apply from: "$rootProject.rootDir.absolutePath/test-output.gradle"
 android {
     compileSdkVersion 29
 
-
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 29
@@ -25,7 +24,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
 }
 
 dependencies {
@@ -39,6 +37,11 @@ dependencies {
     implementation libraries.timber
 
     kapt libraries.objectboxProcessor
+
+    testImplementation libraries.jUnit5
+    testRuntimeOnly libraries.jUnit5Engine
+    testImplementation libraries.kotlinTest
+    testImplementation libraries.mockk
 }
 
 apply plugin: 'io.objectbox'
