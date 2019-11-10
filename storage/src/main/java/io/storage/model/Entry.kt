@@ -4,8 +4,7 @@ import io.objectbox.annotation.Convert
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
 import io.storage.model.Payload.PayloadConverter
-import io.storage.model.ValidityTime.SPAN_FOREVER
-import io.storage.model.ValidityTime.ValidityTimeConverter
+import io.storage.model.LifeTime.*
 import java.util.*
 
 @Entity
@@ -15,7 +14,7 @@ data class Entry(
     val payload: Payload = payloadOf(""),
     val collection: String = "",
     @Convert(converter = ValidityTimeConverter::class, dbType = Int::class)
-    val validityTime: ValidityTime = SPAN_FOREVER
+    val lifeTime: LifeTime = FOREVER
 ) {
 
     @Id
@@ -25,9 +24,9 @@ data class Entry(
 
     fun isValid(isAppStart: Boolean): Boolean =
         when {
-            validityTime == ValidityTime.SPAN_FOREVER -> true
-            lastUpdate + validityTime.time > newTimeStamp() -> true
-            validityTime == ValidityTime.SPAN_NEXT_APP_START && !isAppStart -> true
+            lifeTime == FOREVER -> true
+            lastUpdate + lifeTime.time > newTimeStamp() -> true
+            lifeTime == NEXT_APP_START && !isAppStart -> true
             else -> false
         }
 

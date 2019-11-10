@@ -1,6 +1,5 @@
 package io.storage
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.kotlintest.IsolationMode
 import io.kotlintest.TestCase
 import io.kotlintest.TestResult
@@ -9,8 +8,6 @@ import io.objectbox.Box
 import io.objectbox.BoxStore
 import io.storage.model.Entry
 import io.storage.model.MyObjectBox
-import org.junit.Rule
-import org.junit.rules.TestRule
 import java.io.File
 
 internal abstract class StorageSpec : WordSpec() {
