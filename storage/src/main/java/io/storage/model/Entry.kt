@@ -1,5 +1,6 @@
 package io.storage.model
 
+import com.squareup.moshi.Json
 import io.objectbox.annotation.Convert
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
@@ -8,7 +9,7 @@ import java.util.*
 @Entity
 data class Entry(
     val id: String = "",
-    val payload: String = "",
+    val payload: Payload,
     val collection: String = "",
     @Convert(converter = ValidityTime.Converter::class, dbType = Int::class)
     val validityTime: ValidityTime = ValidityTime.SPAN_FOREVER
@@ -16,7 +17,7 @@ data class Entry(
 
     @Id
     var dbIdentifier: Long = NEW_ID
-    val creationDate: Long = newTimeStamp()
+    var creationDate: Long = newTimeStamp()
     val lastUpdate: Long = newTimeStamp()
 
     fun isValid(isAppStart: Boolean): Boolean =

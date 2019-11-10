@@ -1,6 +1,6 @@
 ext {
     versions = [
-            lifeCycleExtensions    : '2.2.0-alpha01',
+            moshi                  : '1.8.0',
     ]
 
     libraries = [
@@ -15,19 +15,13 @@ ext {
             constraintLayout         : 'androidx.constraintlayout:constraintlayout:2.0.0-beta3',
             coreExtensions           : 'androidx.core:core-ktx:1.1.0',
             material                 : 'com.google.android.material:material:1.1.0-alpha10',
-            navigationFragment       : "androidx.navigation:navigation-fragment-ktx:$navControllerVersion",
-            navigationUI             : "androidx.navigation:navigation-ui-ktx:$navControllerVersion",
-            lifecycleExtensions      : "androidx.lifecycle:lifecycle-extensions:$versions.lifeCycleExtensions",
-            liveData                 : "androidx.lifecycle:lifecycle-livedata:$versions.lifeCycleExtensions",
-            liveData_ktx             : "androidx.lifecycle:lifecycle-livedata-ktx:$versions.lifeCycleExtensions",
-            viewModel_ktx            : "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifeCycleExtensions",
-            recyclerView             : 'androidx.recyclerview:recyclerview:1.0.0',
-            playServicesLocation     : "com.google.android.gms:play-services-location:$versions.playServices",
 
             //Third party
             objectboxProcessor       : "io.objectbox:objectbox-processor:$objectboxVersion",
             objectboxAndroid         : "io.objectbox:objectbox-android:$objectboxVersion",
             objectboxBrowser         : "io.objectbox:objectbox-android-objectbrowser:$objectboxVersion",
+            moshi                    : "com.squareup.moshi:moshi:$versions.moshi",
+            moshiCodegen             : "com.squareup.moshi:moshi-kotlin-codegen:$versions.moshi",
             timber                   : 'com.jakewharton.timber:timber:4.7.1',
     ]
 }

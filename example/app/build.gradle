@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 apply from: "$rootProject.rootDir.absolutePath/dependencies.gradle"
 apply from: "$rootProject.rootDir.absolutePath/test-output.gradle"
 
@@ -53,12 +54,10 @@ dependencies {
     implementation libraries.appCompat
     implementation libraries.constraintLayout
     implementation libraries.coreExtensions
-    implementation libraries.lifecycleExtensions
-    implementation libraries.liveData
-    implementation libraries.liveData_ktx
-    implementation libraries.viewModel_ktx
     implementation libraries.material
-    implementation libraries.navigationFragment
-    implementation libraries.navigationUI
+
+    implementation libraries.moshi
+
+    kapt libraries.moshiCodegen
 }
 
