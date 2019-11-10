@@ -3,8 +3,8 @@ package io.storage.model
 import io.objectbox.annotation.Convert
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
-import io.storage.model.Payload.PayloadConverter
 import io.storage.model.LifeTime.*
+import io.storage.model.Payload.PayloadConverter
 import java.util.*
 
 @Entity
@@ -20,7 +20,7 @@ data class Entry(
     @Id
     var id: Long = NEW_ID
     var creationDate: Long = newTimeStamp()
-    val lastUpdate: Long = newTimeStamp()
+    val lastUpdate: Long = creationDate
 
     fun isValid(isAppStart: Boolean): Boolean =
         when {
