@@ -4,6 +4,7 @@ import io.kotlintest.matchers.collections.shouldContain
 import io.kotlintest.matchers.collections.shouldNotContain
 import io.kotlintest.matchers.numerics.shouldBeGreaterThan
 import io.kotlintest.shouldBe
+import io.kotlintest.shouldThrow
 import io.storage.model.LifeTime
 import io.storage.model.LifeTime.*
 import io.storage.model.payloadOf
@@ -130,6 +131,17 @@ internal class StorageSpec : AbstractStorageSpec() {
                 storage.get(USER_COLLECTION) shouldContain secondUser
                 storage.get(USER_COLLECTION) shouldContain thirdUser
 
+            }
+        }
+
+        "Builder" should {
+
+            "throw an exception when a build has been started without app context" {
+
+                shouldThrow<IllegalStateException> {
+                    Storage.Builder.build()
+                }
+                    .message shouldBe "Application context has not been set for storage"
             }
         }
     }
