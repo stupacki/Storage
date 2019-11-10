@@ -41,7 +41,6 @@ dependencies {
     testImplementation libraries.jUnit5
     testRuntimeOnly libraries.jUnit5Engine
     testImplementation libraries.kotlinTest
-    testImplementation libraries.mockk
 }
 
 apply plugin: 'io.objectbox'

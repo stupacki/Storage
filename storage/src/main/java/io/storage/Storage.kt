@@ -5,7 +5,7 @@ import io.objectbox.Box
 import io.objectbox.BoxStore
 import io.objectbox.android.AndroidObjectBrowser
 import io.storage.model.*
-import io.storage.model.LifeTime.*
+import io.storage.model.LifeTime.FOREVER
 import timber.log.Timber
 
 class Storage(private val entryBox: Box<Entry>) {
@@ -97,14 +97,11 @@ class Storage(private val entryBox: Box<Entry>) {
             find(collection, payloadId)
                 ?.let { oldEntry ->
                     payload.apply {
-                        if (oldEntry.payloadId == payloadId)
-                            entryBox.put(newEntry(collection, payloadId, payload, lifeTime)
-                                .apply {
-                                    this.id = oldEntry.id
-                                    creationDate = oldEntry.creationDate
-                                })
-                        else
-                            entryBox.put(newEntry(collection, payloadId, payload, lifeTime))
+                        entryBox.put(newEntry(collection, payloadId, payload, lifeTime)
+                            .apply {
+                                this.id = oldEntry.id
+                                creationDate = oldEntry.creationDate
+                            })
                     }
                 } ?: entryBox.put(newEntry(collection, payloadId, payload, lifeTime))
         }
