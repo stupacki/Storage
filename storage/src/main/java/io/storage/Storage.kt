@@ -32,7 +32,6 @@ class Storage(private val entryBox: Box<Entry>) {
             }
     }
 
-    //Sync Operations
     fun put(collection: String, payloadId: String, payload: Payload): Payload =
         save(collection, payloadId, payload, FOREVER)
 
@@ -45,49 +44,20 @@ class Storage(private val entryBox: Box<Entry>) {
     fun get(collection: String): List<Payload> =
         find(collection).map(Entry::payload)
 
-    fun remove(collection: String, payloadId: String): Unit =
+    fun remove(collection: String, payloadId: String) =
         delete(collection, payloadId)
 
-    fun remove(collection: String): Unit =
+    fun remove(collection: String) =
         delete(collection)
 
-    fun restore(): Unit =
-        delete()
+    fun restore() = delete()
 
-    fun cleanup(): Unit {
+    fun cleanup() {
         val removedEntries = removeOutDated(isAppStart = false)
         Timber.d("Removed $removedEntries outdated entries from storage")
     }
 
-    //Async Operations
-    suspend fun putAsync(collection: String, payloadId: String, payload: Payload): Payload =
-        save(collection, payloadId, payload, FOREVER)
-
-    suspend fun putAsync(collection: String, payloadId: String, payload: Payload, lifeTime: LifeTime): Payload =
-        save(collection, payloadId, payload, lifeTime)
-
-    suspend fun getAsync(collection: String, payloadId: String): Payload? =
-        find(collection, payloadId)?.payload
-
-    suspend fun getAsync(collection: String): List<Payload> =
-        find(collection).map(Entry::payload)
-
-    suspend fun removeAsync(collection: String, payloadId: String): Unit =
-        delete(collection, payloadId)
-
-    suspend fun removeAsync(collection: String): Unit =
-        delete(collection)
-
-    suspend fun restoreAsync(): Unit =
-        delete()
-
-    suspend fun cleanupAsync(): Unit {
-        val removedEntries = removeOutDated(isAppStart = false)
-        Timber.d("Removed $removedEntries outdated entries from storage")
-    }
-
-    //Private Operations
-    private fun appStartCleanup(): Unit {
+    private fun appStartCleanup() {
         val removedEntries = removeOutDated(isAppStart = true)
         Timber.d("Removed $removedEntries outdated entries from storage on app start")
     }
