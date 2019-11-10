@@ -9,7 +9,7 @@ import java.util.*
 
 @Entity
 data class Entry(
-    val id: String,
+    val payloadId: String,
     @Convert(converter = PayloadConverter::class, dbType = String::class)
     val payload: Payload,
     val collection: String,
@@ -18,7 +18,7 @@ data class Entry(
 ) {
 
     @Id
-    var dbIdentifier: Long = NEW_ID
+    var id: Long = NEW_ID
     var creationDate: Long = newTimeStamp()
     val lastUpdate: Long = newTimeStamp()
 

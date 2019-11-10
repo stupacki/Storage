@@ -33,20 +33,20 @@ class Storage(private val entryBox: Box<Entry>) {
     }
 
     //Sync Operations
-    fun put(collection: String, id: String, payload: Payload): Payload =
-        save(collection, id, payload, SPAN_FOREVER)
+    fun put(collection: String, payloadId: String, payload: Payload): Payload =
+        save(collection, payloadId, payload, SPAN_FOREVER)
 
-    fun put(collection: String, id: String, payload: Payload, validityTime: ValidityTime): Payload =
-        save(collection, id, payload, validityTime)
+    fun put(collection: String, payloadId: String, payload: Payload, validityTime: ValidityTime): Payload =
+        save(collection, payloadId, payload, validityTime)
 
-    fun get(collection: String, id: String): Payload? =
-        find(collection, id)?.payload
+    fun get(collection: String, payloadId: String): Payload? =
+        find(collection, payloadId)?.payload
 
     fun get(collection: String): List<Payload> =
         find(collection).map(Entry::payload)
 
-    fun remove(collection: String, id: String): Unit =
-        delete(collection, id)
+    fun remove(collection: String, payloadId: String): Unit =
+        delete(collection, payloadId)
 
     fun remove(collection: String): Unit =
         delete(collection)
@@ -60,20 +60,20 @@ class Storage(private val entryBox: Box<Entry>) {
     }
 
     //Async Operations
-    suspend fun putAsync(collection: String, id: String, payload: Payload): Payload =
-        save(collection, id, payload, SPAN_FOREVER)
+    suspend fun putAsync(collection: String, payloadId: String, payload: Payload): Payload =
+        save(collection, payloadId, payload, SPAN_FOREVER)
 
-    suspend fun putAsync(collection: String, id: String, payload: Payload, validityTime: ValidityTime): Payload =
-        save(collection, id, payload, validityTime)
+    suspend fun putAsync(collection: String, payloadId: String, payload: Payload, validityTime: ValidityTime): Payload =
+        save(collection, payloadId, payload, validityTime)
 
-    suspend fun getAsync(collection: String, id: String): Payload? =
-        find(collection, id)?.payload
+    suspend fun getAsync(collection: String, payloadId: String): Payload? =
+        find(collection, payloadId)?.payload
 
     suspend fun getAsync(collection: String): List<Payload> =
         find(collection).map(Entry::payload)
 
-    suspend fun removeAsync(collection: String, id: String): Unit =
-        delete(collection, id)
+    suspend fun removeAsync(collection: String, payloadId: String): Unit =
+        delete(collection, payloadId)
 
     suspend fun removeAsync(collection: String): Unit =
         delete(collection)
@@ -92,28 +92,28 @@ class Storage(private val entryBox: Box<Entry>) {
         Timber.d("Removed $removedEntries outdated entries from storage on app start")
     }
 
-    private fun save(collection: String, id: String, payload: Payload, validityTime: ValidityTime): Payload =
+    private fun save(collection: String, payloadId: String, payload: Payload, validityTime: ValidityTime): Payload =
         payload.apply {
-            find(collection, id)
+            find(collection, payloadId)
                 ?.let { oldEntry ->
                     payload.apply {
-                        if (oldEntry.id == id)
-                            entryBox.put(newEntry(collection, id, payload, validityTime)
+                        if (oldEntry.payloadId == payloadId)
+                            entryBox.put(newEntry(collection, payloadId, payload, validityTime)
                                 .apply {
-                                    dbIdentifier = oldEntry.dbIdentifier
+                                    this.id = oldEntry.id
                                     creationDate = oldEntry.creationDate
                                 })
                         else
-                            entryBox.put(newEntry(collection, id, payload, validityTime))
+                            entryBox.put(newEntry(collection, payloadId, payload, validityTime))
                     }
-                } ?: entryBox.put(newEntry(collection, id, payload, validityTime))
+                } ?: entryBox.put(newEntry(collection, payloadId, payload, validityTime))
         }
 
-    private fun find(collection: String, id: String): Entry? =
+    private fun find(collection: String, payloadId: String): Entry? =
         entryBox.query()
             .run {
                 equal(Entry_.collection, collection)
-                equal(Entry_.id, id)
+                equal(Entry_.id, payloadId)
                 build()
             }
             .findFirst()
@@ -126,14 +126,14 @@ class Storage(private val entryBox: Box<Entry>) {
             }
             .find()
 
-    private fun delete(collection: String, id: String): Unit =
-        find(collection, id)?.let { entry ->
-            entryBox.remove(entry.dbIdentifier)
+    private fun delete(collection: String, payloadId: String): Unit =
+        find(collection, payloadId)?.let { entry ->
+            entryBox.remove(entry.id)
         } ?: Unit
 
     private fun delete(collection: String): Unit =
         find(collection).forEach { entry ->
-            entryBox.remove(entry.dbIdentifier)
+            entryBox.remove(entry.id)
         }
 
     private fun delete(): Unit =
@@ -142,7 +142,7 @@ class Storage(private val entryBox: Box<Entry>) {
     private fun removeOutDated(isAppStart: Boolean): Int =
         entryBox.all.map { entry ->
             if (!entry.isValid(isAppStart)) {
-                entryBox.remove(entry.dbIdentifier)
+                entryBox.remove(entry.id)
                 1
             } else 0
         }
@@ -150,8 +150,8 @@ class Storage(private val entryBox: Box<Entry>) {
 
     companion object {
 
-        private fun newEntry(collection: String, id: String, payload: Payload, validityTime: ValidityTime) =
-            Entry(id, payload, collection, validityTime)
+        private fun newEntry(collection: String, payloadId: String, payload: Payload, validityTime: ValidityTime) =
+            Entry(payloadId, payload, collection, validityTime)
     }
 }
 
