@@ -48,8 +48,6 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation project(":storage")
-
     //Android
     implementation libraries.appCompat
     implementation libraries.constraintLayout
@@ -57,6 +55,8 @@ dependencies {
     implementation libraries.material
 
     implementation libraries.moshi
+
+    implementation libraries.storage
 
     kapt libraries.moshiCodegen
 }

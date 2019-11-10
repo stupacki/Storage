@@ -30,5 +30,7 @@ ext {
             jUnit5Engine      : "org.junit.jupiter:junit-jupiter-engine:$versions.jUnit5",
             kotlinTest        : 'io.kotlintest:kotlintest-runner-junit5:3.4.2',
             mockk             : 'io.mockk:mockk:1.9.3',
+
+            storage           : 'com.github.stupacki:Storage:0.0.1-SNAPSHOT'
     ]
 }
