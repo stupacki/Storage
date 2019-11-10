@@ -4,7 +4,6 @@ import android.content.Context
 import io.objectbox.Box
 import io.objectbox.BoxStore
 import io.objectbox.android.AndroidObjectBrowser
-import io.objectbox.kotlin.query
 import io.storage.model.*
 import io.storage.model.ValidityTime.SPAN_FOREVER
 import timber.log.Timber
@@ -21,6 +20,7 @@ class Storage(private val entryBox: Box<Entry>) {
         fun build(): Storage =
             appContext?.let { nonNullContext ->
                 Storage(entryBox = generateBoxStore(nonNullContext).boxFor(Entry::class.java))
+                    .apply(Storage::appStartCleanup)
             } ?: throw IllegalStateException("Application context has not been set")
 
         private fun generateBoxStore(context: Context): BoxStore =
@@ -54,6 +54,11 @@ class Storage(private val entryBox: Box<Entry>) {
     fun restore(): Unit =
         delete()
 
+    fun cleanup(): Unit {
+        val removedEntries = removeOutDated(isAppStart = false)
+        Timber.d("Removed $removedEntries outdated entries from storage")
+    }
+
     //Async Operations
     suspend fun putAsync(collection: String, id: String, payload: Payload): Payload =
         save(collection, id, payload, SPAN_FOREVER)
@@ -76,9 +81,15 @@ class Storage(private val entryBox: Box<Entry>) {
     suspend fun restoreAsync(): Unit =
         delete()
 
+    suspend fun cleanupAsync(): Unit {
+        val removedEntries = removeOutDated(isAppStart = false)
+        Timber.d("Removed $removedEntries outdated entries from storage")
+    }
+
     //Private Operations
-    private suspend fun cleanup(): Unit {
-        TODO("implement")
+    private fun appStartCleanup(): Unit {
+        val removedEntries = removeOutDated(isAppStart = true)
+        Timber.d("Removed $removedEntries outdated entries from storage on app start")
     }
 
     private fun save(collection: String, id: String, payload: Payload, validityTime: ValidityTime): Payload =
@@ -127,6 +138,15 @@ class Storage(private val entryBox: Box<Entry>) {
 
     private fun delete(): Unit =
         entryBox.removeAll()
+
+    private fun removeOutDated(isAppStart: Boolean): Int =
+        entryBox.all.map { entry ->
+            if (!entry.isValid(isAppStart)) {
+                entryBox.remove(entry.dbIdentifier)
+                1
+            } else 0
+        }
+            .sum()
 
     companion object {
 
