@@ -5,16 +5,14 @@ import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
 import io.objectbox.annotation.Unique
 import io.storage.model.LifeTime.*
-import io.storage.model.Payload.PayloadConverter
 import java.util.*
 
 @Entity
 data class Entry(
     @Unique
-    @Convert(converter = io.storage.model.PayloadId.PayloadIdConverter::class, dbType = String::class)
+    @Convert(converter = PayloadId.PayloadIdConverter::class, dbType = String::class)
     val payloadId: PayloadId = PayloadId("", ""),
-    @Convert(converter = PayloadConverter::class, dbType = String::class)
-    val payload: Payload = payloadOf(""),
+    val payload: String = "",
     @Convert(converter = ValidityTimeConverter::class, dbType = Int::class)
     val lifeTime: LifeTime = FOREVER
 ) {
@@ -36,8 +34,6 @@ data class Entry(
         private const val NEW_ID: Long = 0L
 
         private fun newTimeStamp(): Long = Calendar.getInstance().timeInMillis
-
-        private fun randomUUID(): String = UUID.randomUUID().toString()
     }
 }
 

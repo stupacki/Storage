@@ -1,5 +1,6 @@
 package io.storage
 
+import com.squareup.moshi.Moshi
 import io.kotlintest.matchers.collections.shouldContain
 import io.kotlintest.matchers.collections.shouldNotContain
 import io.kotlintest.matchers.numerics.shouldBeGreaterThan
@@ -7,7 +8,6 @@ import io.kotlintest.shouldBe
 import io.kotlintest.shouldThrow
 import io.storage.model.LifeTime
 import io.storage.model.LifeTime.*
-import io.storage.model.payloadOf
 import java.lang.Thread.sleep
 
 internal class StorageSpec : AbstractStorageSpec() {
@@ -18,29 +18,29 @@ internal class StorageSpec : AbstractStorageSpec() {
 
             "save a data body successfully forever" {
 
-                saveData(USER_COLLECTION, ID) shouldBe payloadOf(genJson(ID))
+                saveData(USER_COLLECTION, TEST_USER) shouldBe TestUser(ID)
             }
 
             "save a data body successful with a lifetime" {
 
-                saveDataWithLifeTime(ID, ONE_DAY) shouldBe payloadOf(genJson(ID))
+                saveDataWithLifeTime(TEST_USER, ONE_DAY) shouldBe TestUser(ID)
             }
 
             "update an existing data set correctly" {
 
-                saveData(USER_COLLECTION, ID) shouldBe payloadOf(genJson(ID))
+                saveData(USER_COLLECTION, TEST_USER) shouldBe TestUser(ID)
 
                 val oldCreationDate = entryBox.all.first().creationDate
                 val oldLastUpdate = entryBox.all.first().lastUpdate
 
                 oldCreationDate shouldBe oldLastUpdate
 
-                saveData(USER_COLLECTION, ID) shouldBe payloadOf(genJson(ID))
+                saveData(USER_COLLECTION, TEST_USER) shouldBe TestUser(ID)
 
                 val newCreationDate = entryBox.all.first().creationDate
                 val newLastUpdate = entryBox.all.first().lastUpdate
 
-                storage.get(USER_COLLECTION).size shouldBe 1
+                storage.get(USER_COLLECTION, reader).size shouldBe 1
 
                 newCreationDate shouldBe oldCreationDate
                 newLastUpdate shouldBeGreaterThan oldLastUpdate
@@ -51,26 +51,26 @@ internal class StorageSpec : AbstractStorageSpec() {
 
             "return a previously saved data body" {
 
-                saveData(USER_COLLECTION, ID)
+                saveData(USER_COLLECTION, TEST_USER)
 
-                storage.get(USER_COLLECTION, ID) shouldBe payloadOf(genJson(ID))
+                storage.get(USER_COLLECTION, ID, reader) shouldBe TestUser(ID)
             }
 
             "return null when no data can be found" {
 
-                storage.get(USER_COLLECTION, ID) shouldBe null
+                storage.get(USER_COLLECTION, ID, reader) shouldBe null
             }
 
             "return all data sets of a collection" {
 
-                (1..3).forEach { id -> saveData(USER_COLLECTION, genJson("$id")) }
+                (1..3).forEach { id -> saveData(USER_COLLECTION, TestUser("$id")) }
 
-                storage.get(USER_COLLECTION).size shouldBe 3
+                storage.get(USER_COLLECTION, reader).size shouldBe 3
             }
 
             "return an empty list when the collection is empty" {
 
-                storage.get(USER_COLLECTION).size shouldBe 0
+                storage.get(USER_COLLECTION, reader).size shouldBe 0
             }
         }
 
@@ -78,22 +78,22 @@ internal class StorageSpec : AbstractStorageSpec() {
 
             "delete a previously stored data set" {
 
-                saveData(USER_COLLECTION, ID)
+                saveData(USER_COLLECTION, TEST_USER)
 
-                storage.remove(USER_COLLECTION, ID)
+                storage.remove(USER_COLLECTION, TEST_USER.id)
 
-                storage.get(USER_COLLECTION, ID) shouldBe null
+                storage.get(USER_COLLECTION, reader) shouldBe emptyList()
             }
 
             "delete all entries from a collection" {
 
-                (1..3).forEach { id -> saveData(USER_COLLECTION, genJson("$id")) }
+                (1..3).forEach { id -> saveData(USER_COLLECTION, TestUser("$id")) }
 
-                storage.get(USER_COLLECTION).size shouldBe 3
+                storage.get(USER_COLLECTION, reader).size shouldBe 3
 
                 storage.remove(USER_COLLECTION)
 
-                storage.get(USER_COLLECTION).size shouldBe 0
+                storage.get(USER_COLLECTION, reader).size shouldBe 0
             }
         }
 
@@ -101,16 +101,16 @@ internal class StorageSpec : AbstractStorageSpec() {
 
             "delete all data across collections" {
 
-                (1..3).forEach { id -> saveData(USER_COLLECTION, genJson("$id")) }
-                (1..3).forEach { id -> saveData(MESSAGES_COLLECTION, genJson("$id")) }
+                (1..3).forEach { id -> saveData(USER_COLLECTION, TestUser("$id")) }
+                (1..3).forEach { id -> saveData(MESSAGES_COLLECTION, TestUser("$id")) }
 
-                storage.get(USER_COLLECTION).size shouldBe 3
-                storage.get(MESSAGES_COLLECTION).size shouldBe 3
+                storage.get(USER_COLLECTION, reader).size shouldBe 3
+                storage.get(MESSAGES_COLLECTION, reader).size shouldBe 3
 
                 storage.restore()
 
-                storage.get(USER_COLLECTION).size shouldBe 0
-                storage.get(MESSAGES_COLLECTION).size shouldBe 0
+                storage.get(USER_COLLECTION, reader).size shouldBe 0
+                storage.get(MESSAGES_COLLECTION, reader).size shouldBe 0
             }
         }
 
@@ -118,19 +118,20 @@ internal class StorageSpec : AbstractStorageSpec() {
 
             "remove outdated data entries and leave valid ones in the db" {
 
-                val firstUser = saveDataWithLifeTime("1", ONE_SECOND)
-                val secondUser = saveDataWithLifeTime("2", ONE_HOUR)
-                val thirdUser = saveDataWithLifeTime("3", NEXT_APP_START)
+                val firstUser = saveDataWithLifeTime(TestUser("1"), ONE_SECOND)
+                val secondUser = saveDataWithLifeTime(TestUser("2"), ONE_HOUR)
+                val thirdUser = saveDataWithLifeTime(TestUser("3"), NEXT_APP_START)
 
                 sleep(1000L)
 
                 storage.cleanup()
 
-                storage.get(USER_COLLECTION).size shouldBe 2
-                storage.get(USER_COLLECTION) shouldNotContain firstUser
-                storage.get(USER_COLLECTION) shouldContain secondUser
-                storage.get(USER_COLLECTION) shouldContain thirdUser
-
+                storage.get(USER_COLLECTION, reader).let { userData ->
+                    userData.size shouldBe 2
+                    userData shouldNotContain firstUser
+                    userData shouldContain secondUser
+                    userData shouldContain thirdUser
+                }
             }
         }
 
@@ -146,26 +147,34 @@ internal class StorageSpec : AbstractStorageSpec() {
         }
     }
 
-    private fun saveData(collection: String, id: String) =
+    private fun saveData(collection: String, user: TestUser) =
         storage.put(
             collection = collection,
-            payloadId = id,
-            payload = payloadOf(genJson(id))
-        )
+            payloadId = user.id,
+            payload = user,
+            writer = writer)
 
-    private fun saveDataWithLifeTime(id: String, validityTime: LifeTime) =
+    private fun saveDataWithLifeTime(user: TestUser, validityTime: LifeTime) =
         storage.put(
             collection = USER_COLLECTION,
-            payloadId = id,
-            payload = payloadOf(genJson(id)),
-            lifeTime = validityTime
+            payloadId = user.id,
+            payload = user,
+            lifeTime = validityTime,
+            writer = writer
         )
+
+    data class TestUser(val id: String)
 
     companion object {
         private const val USER_COLLECTION = "USER_COLLECTION"
         private const val MESSAGES_COLLECTION = "MESSAGES_COLLECTION"
         private const val ID = "1"
 
-        private fun genJson(id: String) = "{'id': $id}"
+        private val TEST_USER = TestUser("1")
+
+        private val testUserAdapter = Moshi.Builder().build().adapter(TestUser::class.java)
+
+        private val reader: (String?) -> TestUser? = { json -> json?.let { testUserAdapter.fromJson(json) } }
+        private val writer: (TestUser) -> String = { obj -> testUserAdapter.toJson(obj) }
     }
 }

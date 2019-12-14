@@ -32,17 +32,17 @@ class Storage(private val entryBox: Box<Entry>) {
             }
     }
 
-    fun put(collection: String, payloadId: String, payload: Payload): Payload =
-        save(collection, payloadId, payload, FOREVER)
+    fun <T> put(collection: String, payloadId: String, payload: T, writer: (T) -> String): T =
+        save(collection, payloadId, payload, FOREVER, writer)
 
-    fun put(collection: String, payloadId: String, payload: Payload, lifeTime: LifeTime): Payload =
-        save(collection, payloadId, payload, lifeTime)
+    fun <T> put(collection: String, payloadId: String, payload: T, lifeTime: LifeTime, writer: (T) -> String): T =
+        save(collection, payloadId, payload, lifeTime, writer)
 
-    fun get(collection: String, payloadId: String): Payload? =
-        find(collection, payloadId)?.payload
+    fun <T> get(collection: String, payloadId: String, reader: (String?) -> T?): T? =
+        reader(find(collection, payloadId)?.payload)
 
-    fun get(collection: String): List<Payload> =
-        find(collection).map(Entry::payload)
+    fun <T> get(collection: String, reader: (String) -> T): List<T> =
+        find(collection).map { reader(it.payload) }
 
     fun remove(collection: String, payloadId: String) =
         delete(collection, payloadId)
@@ -62,18 +62,18 @@ class Storage(private val entryBox: Box<Entry>) {
         Timber.d("Removed $removedEntries outdated entries from storage on app start")
     }
 
-    private fun save(collection: String, payloadId: String, payload: Payload, lifeTime: LifeTime): Payload =
+    private fun <T> save(collection: String, payloadId: String, payload: T, lifeTime: LifeTime, writer: (T) -> String): T =
         payload.apply {
             find(collection, payloadId)
                 ?.let { oldEntry ->
                     payload.apply {
-                        entryBox.put(newEntry(collection, payloadId, payload, lifeTime)
+                        entryBox.put(newEntry(collection, payloadId, payload, lifeTime, writer)
                             .apply {
                                 id = oldEntry.id
                                 creationDate = oldEntry.creationDate
                             })
                     }
-                } ?: entryBox.put(newEntry(collection, payloadId, payload, lifeTime))
+                } ?: entryBox.put(newEntry(collection, payloadId, payload, lifeTime, writer))
         }
 
     private fun find(collection: String, payloadId: String): Entry? =
@@ -116,8 +116,8 @@ class Storage(private val entryBox: Box<Entry>) {
 
     companion object {
 
-        private fun newEntry(collection: String, payloadId: String, payload: Payload, validityTime: LifeTime) =
-            Entry(PayloadId(payloadId, collection), payload, validityTime)
+        private fun <T> newEntry(collection: String, payloadId: String, payload: T, validityTime: LifeTime, writer: (T) -> String) =
+            Entry(PayloadId(payloadId, collection), writer(payload), validityTime)
     }
 }
 
