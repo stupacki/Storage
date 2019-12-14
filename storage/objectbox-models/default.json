@@ -22,15 +22,12 @@
         },
         {
           "id": "4:8753470726990210496",
+          "indexId": "1:4162398474610299118",
           "name": "payloadId"
         },
         {
           "id": "5:8999102886884114076",
           "name": "payload"
-        },
-        {
-          "id": "6:7060504767919749461",
-          "name": "collection"
         },
         {
           "id": "8:6653615783446344800",
@@ -41,7 +38,7 @@
     }
   ],
   "lastEntityId": "1:6359757881459827079",
-  "lastIndexId": "0:0",
+  "lastIndexId": "1:4162398474610299118",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 4,
@@ -49,7 +46,8 @@
   "retiredEntityUids": [],
   "retiredIndexUids": [],
   "retiredPropertyUids": [
-    5601683485330962264
+    5601683485330962264,
+    7060504767919749461
   ],
   "retiredRelationUids": [],
   "version": 1

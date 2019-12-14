@@ -69,7 +69,7 @@ class Storage(private val entryBox: Box<Entry>) {
                     payload.apply {
                         entryBox.put(newEntry(collection, payloadId, payload, lifeTime)
                             .apply {
-                                this.id = oldEntry.id
+                                id = oldEntry.id
                                 creationDate = oldEntry.creationDate
                             })
                     }
@@ -79,8 +79,7 @@ class Storage(private val entryBox: Box<Entry>) {
     private fun find(collection: String, payloadId: String): Entry? =
         entryBox.query()
             .run {
-                equal(Entry_.collection, collection)
-                equal(Entry_.payloadId, payloadId)
+                equal(Entry_.payloadId, PayloadId.toString(PayloadId(id = payloadId, collection = collection)))
                 build()
             }
             .findFirst()
@@ -88,7 +87,7 @@ class Storage(private val entryBox: Box<Entry>) {
     private fun find(collection: String): List<Entry> =
         entryBox.query()
             .run {
-                equal(Entry_.collection, collection)
+                contains(Entry_.payloadId, collection)
                 build()
             }
             .find()
@@ -118,7 +117,7 @@ class Storage(private val entryBox: Box<Entry>) {
     companion object {
 
         private fun newEntry(collection: String, payloadId: String, payload: Payload, validityTime: LifeTime) =
-            Entry(payloadId, payload, collection, validityTime)
+            Entry(PayloadId(payloadId, collection), payload, validityTime)
     }
 }
 
